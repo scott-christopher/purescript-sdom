@@ -2,7 +2,10 @@ module SDOM.Components where
 
 import Prelude
 
-import SDOM (SDOM, text_)
+import Color (Color, fromHexString, toHexString)
+import Data.Maybe (fromJust)
+import Partial.Unsafe (unsafePartial)
+import SDOM (Attr, SDOM, text_)
 import SDOM.Attributes as A
 import SDOM.Elements as E
 import SDOM.Events as Events
@@ -74,3 +77,64 @@ select fromOption toOption options =
       let { key, label } = fromOption option
        in E.option [ A.value \_ _ -> key ] [] [ text_ label ]
     )
+
+colorInput
+  :: forall model channel context
+   . (model -> Color)
+  -> (model -> Color -> model)
+  -> SDOM channel context model model
+colorInput getColor setColor =
+  E.input
+    [ A.type_ \_ _ -> "color"
+    , A.value \_ model -> toHexString (getColor model)
+    ]
+    [ Events.input \_ e -> pure \model ->
+        setColor model $ unsafePartial $ fromJust $ fromHexString (unsafeCoerce e).target.value
+    ]
+    []
+
+hiddenInput
+  :: forall model channel context
+   . (context -> model -> String)
+  -> (model -> String)
+  -> SDOM channel context model model
+hiddenInput name getValue =
+  E.input
+    [ A.type_ \_ _ -> "hidden"
+    , A.value \_ model -> getValue model
+    , A.name \context model -> name context model
+    ]
+    []
+    []
+
+imageInput
+  :: forall model channel context
+   . (model -> String)
+  -> (model -> String)
+  -> SDOM channel context model model
+imageInput getAlt getSrc =
+  E.input
+    [ A.type_ \_ _ -> "image"
+    , A.src \_ model -> getSrc model
+    , A.alt \_ model -> getAlt model
+    ]
+    []
+    []
+
+numberInput
+  :: forall model channel context
+   . (context -> model -> String)
+  -> Array (Attr context model)
+  -> (model -> Number)
+  -> (model -> Number -> model)
+  -> SDOM channel context model model
+numberInput name attrs getVal setVal =
+  E.input
+    ([ A.type_ \_ _ -> "number"
+    , A.value \_ model -> show $ getVal model
+    , A.name \context model -> name context model
+    ] <> attrs)
+    [ Events.input \_ e -> pure \model ->
+        setVal model (unsafeCoerce e).target.valueAsNumber
+    ]
+    []

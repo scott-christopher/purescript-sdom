@@ -14,3 +14,9 @@ click
   . (context -> Event.Event -> e)
   -> Handler context e
 click = handler "click"
+
+input
+  :: forall context e
+  . (context -> Event.Event -> e)
+  -> Handler context e
+input = handler "input"

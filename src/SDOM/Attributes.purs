@@ -1,8 +1,10 @@
 module SDOM.Attributes
-  ( for
+  ( alt
+  , for
   , id
   , name
   , className
+  , src
   , type_
   , value
   , checked
@@ -25,6 +27,9 @@ attr attrName f =
         when (oldValue /= newValue) (setAttribute attrName newValue e)
     }
 
+alt :: forall context model. (context -> model -> String) -> Attr context model
+alt = attr "alt"
+
 for :: forall context model. (context -> model -> String) -> Attr context model
 for = attr "for"
 
@@ -36,6 +41,9 @@ className = attr "class"
 
 name :: forall context model. (context -> model -> String) -> Attr context model
 name = attr "name"
+
+src :: forall context model. (context -> model -> String) -> Attr context model
+src = attr "src"
 
 type_ :: forall context model. (context -> model -> String) -> Attr context model
 type_ = attr "type"

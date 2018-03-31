@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "purescript-dom": "^4.13.2",
+    "purescript-colors": "^4.3.0",
     "purescript-behaviors": "^6.3.0",
     "purescript-profunctor": "^3.2.0",
     "purescript-refs": "^3.0.0"
